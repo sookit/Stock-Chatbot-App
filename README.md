@@ -21,23 +21,17 @@ Stock-Chatbot의 챗봇 데모
 
 2. 프로젝트 디렉토리로 이동합니다.
 
-  ``` 
-bash
+  ``` bash
    cd Stock-Chatbot
 ```
 
-3. requirements.txt 파일을 사용하여 필요한 의존성을 설치합니다.
+3. 2개의 파일 files_for_back/requirements.txt, files_for_front/requirements.txt 파일을 사용하여 필요한 의존성을 설치합니다.
 
-   ```
-bash
+   ```bash
    pip install -r requirements.txt
-
-```
+   ```
 
 ## 애플리케이션 실행
 
-1. app/main.py 파일을 실행하여 애플리케이션을 시작합니다.
-
-   
-bash
-   python app/main.py
+1. files_for_back/app.py 파일을 실행합니다.
+2. files_for_front/demo.py 파일을 실행하여 애플리케이션을 시작합니다.
