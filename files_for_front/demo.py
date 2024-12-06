@@ -1,7 +1,8 @@
+
 import streamlit as st
 import requests
 from streamlit_chat import message
-import speech_recognition as sr
+
 
 # API 호출 함수
 def send_query_to_api(query, time_limit):
@@ -24,7 +25,7 @@ def send_chat_to_api(analysis_query):
     except requests.exceptions.RequestException as e:
         return {"error": str(e)}
 
-# 초기 상태 설정
+#초기상태 설정
 if 'step' not in st.session_state:
     st.session_state['step'] = 'query_input'
     st.session_state['query'] = ""
@@ -75,14 +76,23 @@ for i, msg in enumerate(st.session_state['messages']):
     if 'data' in msg and 'is_user' in msg:
         message(msg['data'], is_user=msg['is_user'], key=f"message_{i}")
     else:
-        message(f"Error: Message at index {i} is missing required keys.", is_user=False, key=f"message_{i}")
+        print(f"Error: Message at index {i} is missing required keys.")
 
+
+
+import speech_recognition as sr
+
+# 음성 인식 함수
 def recognize_speech():
     recognizer = sr.Recognizer()
+
     with sr.Microphone() as source:
-        st.write("음성 인식 시작됨... 마이크에 대고 말해 주세요.")
+        print("음성 인식 시작됨... 마이크에 대고 말해 주세요.")
+        
+        # 음성 인식 시작
         audio = recognizer.listen(source)
         try:
+            # 음성을 텍스트로 변환
             text = recognizer.recognize_google(audio, language="ko-KR")
             return text
         except sr.UnknownValueError:
@@ -90,38 +100,14 @@ def recognize_speech():
         except sr.RequestError:
             return "음성 인식 서비스를 사용할 수 없습니다."
 
-# 음성 인식 후 처리 함수
-def handle_speech_input():
-    text = recognize_speech()  # 음성 인식 결과
-    if text:
-        st.session_state['speech_input'] = text  # 음성 인식 결과를 `speech_input`에 저장
-        st.session_state['input_changed'] = True  # 입력이 변경되었음을 표시
 
-# 초기 메시지 상태 설정
-if 'messages' not in st.session_state:
-    st.session_state['messages'] = []
-
-# 사용자 입력 처리
+# 입력 필드와 음성 인식 버튼
 with st.container():
     col1, col2 = st.columns([4, 1])
     with col1:
-        user_input = st.text_input("User Input:", key="user_input")
+        st.text_input("User Input:", on_change=on_input_change, key="user_input")
     with col2:
         if st.button("🎤"):
-            handle_speech_input()  # 음성 인식 처리
-
-# 음성 인식 후 메시지 확인
-if 'input_changed' in st.session_state and st.session_state['input_changed']:
-    # 음성 인식 결과 메시지 출력
-    st.session_state.messages.append({"data": st.session_state['speech_input'], "is_user": True})  # 사용자 메시지
-    st.session_state.messages.append({"data": f"음성 인식 결과: {st.session_state['speech_input']} 맞나요?", "is_user": False})  # 봇의 확인 메시지
-    st.session_state['input_changed'] = False  # 변경 상태 초기화
-
-# 확인 메시지 처리 (사용자가 '맞아요' 또는 '아니요'로 응답)
-if len(st.session_state.messages) > 1 and "맞나요?" in st.session_state.messages[-1]["data"]:
-    confirm_input = st.text_input("확인: '맞아요' 또는 '아니요'로 답해주세요", key="confirmation_input")
-
-    if confirm_input.lower() == "맞아요":
-        st.session_state.messages.append({"data": "확인되었습니다! 음성 인식이 맞습니다.", "is_user": False})
-    elif confirm_input.lower() == "아니요":
-        st.session_state.messages.append({"data": "다시 시도해주세요. 음성 인식이 잘못되었습니다.", "is_user": False})
+            text = recognize_speech()  # 음성 인식 결과
+            st.session_state.user_input = text  # 음성 인식 결과를 입력값으로 설정
+            on_input_change()  # API 요청 실행

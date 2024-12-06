@@ -33,5 +33,6 @@ Stock-Chatbot의 챗봇 데모
 
 ## 애플리케이션 실행
 
-1. files_for_back/app.py 파일을 실행합니다.
-2. files_for_front/demo.py 파일을 실행하여 애플리케이션을 시작합니다.
+1. 서로 다른 컴퓨터로 실행할 시, files_for_front/demo.py에서 request를 보내는 부분의 ip주소를 변경해야 합니다.
+2. files_for_back/app.py 파일을 실행합니다.
+3. files_for_front/demo.py 파일을 실행하여 애플리케이션을 시작합니다.
